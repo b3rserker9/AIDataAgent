@@ -1,22 +1,23 @@
-# Usa un'immagine base con Python 3.9
-FROM python:3.9-slim
+# Immagine base NVIDIA con Python e CUDA 12.1
+FROM pytorch/pytorch:2.2.0-cuda12.1-cudnn8-runtime
 
-# Aggiorna e installa le dipendenze necessarie
+# Installa dipendenze di sistema
 RUN apt-get update && apt-get install -y \
     git \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Crea una directory per il progetto
+# Crea la cartella dell'app
 WORKDIR /app
 
-# Copia il file requirements.txt e installa le librerie
+# Copia i requirements
 COPY requirements.txt .
 
-# Installa Hugging Face Transformers e PyTorch (se non già presenti)
+# Installa le librerie Python
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copia il codice dell'app nel contenitore
+# Copia tutto il codice sorgente
 COPY . .
 
-# Comando di default per avviare il server
+# Avvia l'app
 CMD ["python", "test.py"]
